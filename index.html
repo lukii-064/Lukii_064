@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FUT SCHOOL — навигатор в будущее</title>
+<style>
+  :root{
+    --blue:#0038FF;
+    --deep:#001A7A;
+    --navy:#000F4B;
+    --yellow:#FFE500;
+    --yellow-soft:#FFF6BF;
+    --paper:#F4F6FF;
+    --ink:#0B0E2A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:Arial,"Helvetica Neue",sans-serif;
+    background:var(--paper);color:var(--ink);
+    overflow-x:hidden;
+  }
+  .mono{font-family:"Courier New",monospace}
+  .container{max-width:1200px;margin:0 auto;padding:0 28px}
+
+  /* ============ NAV ============ */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:200;
+    background:var(--navy);border-bottom:3px solid var(--yellow);
+  }
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:62px;max-width:1200px;margin:0 auto;padding:0 28px}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+  .brand-mark{
+    width:36px;height:36px;background:var(--yellow);color:var(--navy);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:900;font-size:19px;transform:rotate(-6deg);
+    box-shadow:4px 4px 0 rgba(255,229,0,.3);
+  }
+  .brand-name{color:#fff;font-weight:900;font-size:18px;letter-spacing:.06em}
+  .brand-name small{display:block;font-size:9px;letter-spacing:.32em;color:var(--yellow);font-weight:700}
+  .nav-links{display:flex;gap:2px;list-style:none}
+  .nav-links a{
+    color:#B9C6FF;text-decoration:none;font-size:13px;font-weight:700;
+    padding:8px 13px;letter-spacing:.04em;text-transform:uppercase;transition:.15s;
+  }
+  .nav-links a:hover{background:var(--blue);color:#fff}
+  .nav-links a.cta{background:var(--yellow);color:var(--navy)}
+  .nav-links a.cta:hover{background:#fff}
+  @media(max-width:900px){.nav-links{display:none}}
+
+  /* ============ HERO ============ */
+  .hero{
+    min-height:100vh;background:var(--navy);color:#fff;position:relative;
+    padding:150px 0 0;overflow:hidden;
+  }
+  /* blueprint grid */
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(0,56,255,.35) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(0,56,255,.35) 1px,transparent 1px),
+      linear-gradient(rgba(0,56,255,.14) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(0,56,255,.14) 1px,transparent 1px);
+    background-size:120px 120px,120px 120px,24px 24px,24px 24px;
+  }
+  .hero-inner{position:relative;z-index:2}
+  .hero-tag{
+    display:inline-block;background:var(--yellow);color:var(--navy);
+    font-size:12px;font-weight:900;letter-spacing:.24em;text-transform:uppercase;
+    padding:8px 16px;margin-bottom:34px;transform:rotate(-1.5deg);
+  }
+  .hero h1{
+    font-size:clamp(48px,9.5vw,124px);font-weight:900;line-height:.94;
+    text-transform:uppercase;letter-spacing:-.02em;
+  }
+  .hero h1 .row{display:block}
+  .hero h1 .outline{
+    color:transparent;-webkit-text-stroke:2.5px var(--yellow);
+  }
+  .hero h1 .fill-yellow{color:var(--yellow)}
+  .hero-sub{
+    display:flex;flex-wrap:wrap;gap:40px;align-items:flex-end;
+    margin-top:44px;padding-bottom:70px;
+  }
+  .hero-sub p{max-width:440px;font-size:17px;color:#C4CFFF;line-height:1.65}
+  .hero-sub p b{color:#fff}
+  .hero-cta{
+    display:inline-flex;align-items:center;gap:14px;background:var(--yellow);
+    color:var(--navy);text-decoration:none;font-weight:900;font-size:16px;
+    padding:20px 34px;text-transform:uppercase;letter-spacing:.05em;
+    box-shadow:8px 8px 0 var(--blue);transition:.15s;
+  }
+  .hero-cta:hover{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--blue)}
+  .hero-progress{
+    position:relative;z-index:2;background:var(--blue);
+    border-top:3px solid var(--yellow);padding:26px 0;
+  }
+  .hp-in{display:flex;flex-wrap:wrap;align-items:center;gap:22px}
+  .hp-label{color:#fff;font-weight:900;text-transform:uppercase;font-size:13px;letter-spacing:.18em;white-space:nowrap}
+  .hp-bar{flex:1;min-width:220px;height:26px;background:rgba(255,255,255,.15);position:relative}
+  .hp-fill{
+    height:100%;width:72%;background:repeating-linear-gradient(
+      -45deg,var(--yellow) 0 14px,#F5D800 14px 28px);
+    animation:stripes 1.2s linear infinite;
+  }
+  @keyframes stripes{to{background-position:39.6px 0}}
+  .hp-pct{color:var(--yellow);font-weight:900;font-size:26px}
+  .hp-step{color:#C4CFFF;font-size:14px}
+  .hp-step b{color:#fff}
+
+  /* ============ MARQUEE ============ */
+  .marquee{
+    background:var(--yellow);color:var(--navy);overflow:hidden;
+    border-top:3px solid var(--navy);border-bottom:3px solid var(--navy);
+    padding:14px 0;white-space:nowrap;
+  }
+  .marquee-track{display:inline-block;animation:marq 22s linear infinite;font-weight:900;font-size:18px;letter-spacing:.12em;text-transform:uppercase}
+  .marquee-track span{margin:0 26px}
+  @keyframes marq{to{transform:translateX(-50%)}}
+
+  /* ============ SECTIONS ============ */
+  section{padding:100px 0}
+  .sec-head{display:flex;align-items:baseline;gap:26px;margin-bottom:56px;flex-wrap:wrap}
+  .sec-num{
+    font-size:15px;font-weight:900;color:var(--navy);background:var(--yellow);
+    padding:6px 14px;letter-spacing:.15em;white-space:nowrap;
+  }
+  .sec-title{font-size:clamp(30px,4.5vw,52px);font-weight:900;text-transform:uppercase;letter-spacing:-.01em;line-height:1.02}
+  .sec-title em{font-style:normal;color:var(--blue)}
+  .sec-desc{max-width:640px;font-size:16.5px;color:#3D4568;margin-top:14px}
+
+  /* ============ MANIFESTO (было "почему мы") ============ */
+  .manifesto{background:#fff;border-top:3px solid var(--navy)}
+  .mani-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:3px solid var(--navy)}
+  @media(max-width:900px){.mani-grid{grid-template-columns:1fr}}
+  .mani-cell{
+    padding:34px 30px;border-right:3px solid var(--navy);border-bottom:3px solid var(--navy);
+    transition:.15s;position:relative;background:#fff;
+  }
+  .mani-cell:hover{background:var(--yellow)}
+  .mani-cell .idx{font-family:"Courier New",monospace;font-weight:700;font-size:14px;color:var(--blue)}
+  .mani-cell h3{font-size:21px;font-weight:900;text-transform:uppercase;margin:12px 0 10px}
+  .mani-cell p{font-size:14.5px;color:#3D4568;line-height:1.6}
+  .mani-cell:hover p{color:var(--navy)}
+  .mani-cell:nth-child(3n){border-right:none}
+  .mani-cell:nth-child(n+4){border-bottom:none}
+  @media(max-width:900px){
+    .mani-cell{border-right:none!important;border-bottom:3px solid var(--navy)!important}
+    .mani-cell:last-child{border-bottom:none!important}
+  }
+
+  /* ============ FACTS ============ */
+  .facts{background:var(--navy);color:#fff;border-top:3px solid var(--yellow);position:relative;overflow:hidden}
+  .facts::before{
+    content:"";position:absolute;inset:0;
+    background-image:linear-gradient(rgba(0,56,255,.28) 1px,transparent 1px),linear-gradient(90deg,rgba(0,56,255,.28) 1px,transparent 1px);
+    background-size:60px 60px;
+  }
+  .facts .container{position:relative}
+  .facts .sec-title{color:#fff}
+  .facts .sec-title em{color:var(--yellow)}
+  .facts .sec-num{color:var(--navy)}
+  .fact-rows{border:3px solid var(--yellow)}
+  .fact-row{
+    display:grid;grid-template-columns:220px 1fr;align-items:center;
+    border-bottom:3px solid var(--yellow);
+  }
+  .fact-row:last-child{border-bottom:none}
+  @media(max-width:700px){.fact-row{grid-template-columns:1fr}}
+  .fact-big{
+    background:var(--blue);padding:30px;text-align:center;
+    border-right:3px solid var(--yellow);
+  }
+  @media(max-width:700px){.fact-big{border-right:none;border-bottom:3px solid var(--yellow)}}
+  .fact-big b{
+    display:block;font-size:clamp(44px,6vw,72px);font-weight:900;color:var(--yellow);line-height:1;
+  }
+  .fact-big span{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#C4CFFF}
+  .fact-text{padding:26px 30px;font-size:16px;color:#E4EAFF;line-height:1.6}
+  .fact-text b{color:var(--yellow)}
+  .facts-src{margin-top:22px;font-size:13px;color:#7E90D8;font-family:"Courier New",monospace}
+
+  /* ============ ROADMAP (metro style) ============ */
+  .route{display:flex;flex-direction:column}
+  .station{
+    display:grid;grid-template-columns:90px 44px 1fr;align-items:center;
+    padding:30px 0;border-bottom:2px dashed #B9C4E8;
+  }
+  @media(max-width:640px){.station{grid-template-columns:64px 34px 1fr}}
+  .st-num{
+    font-size:44px;font-weight:900;color:transparent;
+    -webkit-text-stroke:2px var(--blue);line-height:1;
+  }
+  .station.active .st-num{color:var(--blue);-webkit-text-stroke:0}
+  .st-dot{
+    width:26px;height:26px;border-radius:50%;background:#fff;
+    border:6px solid var(--blue);justify-self:center;position:relative;z-index:1;
+  }
+  .station.active .st-dot{border-color:var(--yellow);background:var(--navy)}
+  .st-body h3{font-size:22px;font-weight:900;text-transform:uppercase}
+  .station.active .st-body h3{color:var(--blue)}
+  .st-body p{color:#3D4568;font-size:15px;margin-top:6px;max-width:560px}
+  .st-meta{margin-top:10px;display:inline-block;font-family:"Courier New",monospace;font-size:13px;font-weight:700;background:var(--yellow);padding:4px 12px;color:var(--navy)}
+  .station:hover{background:var(--yellow-soft)}
+
+  /* ============ QUIZ ============ */
+  .quiz-sec{background:#fff;border-top:3px solid var(--navy);border-bottom:3px solid var(--navy)}
+  .quiz-box{border:3px solid var(--navy);max-width:820px;margin:0 auto;box-shadow:12px 12px 0 var(--blue)}
+  .quiz-top{background:var(--navy);color:#fff;padding:22px 30px;display:flex;justify-content:space-between;align-items:center}
+  .quiz-top b{font-size:15px;letter-spacing:.18em;text-transform:uppercase}
+  .quiz-top .mono{color:var(--yellow);font-size:13px}
+  .quiz-body{padding:36px 30px}
+  .quiz-q{font-size:clamp(20px,3vw,28px);font-weight:900;text-transform:uppercase;margin-bottom:28px;line-height:1.2}
+  .quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:0;border:3px solid var(--navy)}
+  @media(max-width:640px){.quiz-opts{grid-template-columns:1fr}}
+  .quiz-opt{
+    font-family:inherit;font-size:15.5px;font-weight:700;text-align:left;
+    padding:22px 24px;background:#fff;border:none;border-right:3px solid var(--navy);
+    border-bottom:3px solid var(--navy);cursor:pointer;transition:.12s;
+  }
+  .quiz-opt:nth-child(2n){border-right:none}
+  .quiz-opt:nth-child(n+3){border-bottom:none}
+  @media(max-width:640px){
+    .quiz-opt{border-right:none!important;border-bottom:3px solid var(--navy)!important}
+    .quiz-opt:last-child{border-bottom:none!important}
+  }
+  .quiz-opt:hover{background:var(--yellow)}
+  .quiz-opt.picked{background:var(--blue);color:#fff}
+  .quiz-res{display:none;padding:10px 30px 36px}
+  .quiz-res-in{background:var(--yellow);border:3px solid var(--navy);padding:28px}
+  .quiz-res h3{font-size:24px;font-weight:900;text-transform:uppercase;margin-bottom:10px}
+  .quiz-res p{font-size:15px;line-height:1.6}
+  .quiz-retry{
+    margin-top:18px;font-family:inherit;font-weight:900;font-size:13px;letter-spacing:.1em;
+    text-transform:uppercase;background:var(--navy);color:var(--yellow);border:none;
+    padding:13px 24px;cursor:pointer;
+  }
+  .quiz-retry:hover{background:var(--blue)}
+
+  /* ============ PROFESSIONS: editorial table ============ */
+  .prof-list{border-top:3px solid var(--navy)}
+  .prof-row{
+    display:grid;grid-template-columns:70px 1.2fr 1.6fr auto;align-items:center;gap:24px;
+    padding:26px 10px;border-bottom:3px solid var(--navy);text-decoration:none;color:inherit;
+    transition:.15s;
+  }
+  .prof-row:hover{background:var(--yellow);padding-left:24px}
+  @media(max-width:800px){.prof-row{grid-template-columns:50px 1fr;grid-auto-rows:auto}}
+  .prof-idx{font-family:"Courier New",monospace;font-weight:700;font-size:15px;color:var(--blue)}
+  .prof-name{font-size:clamp(19px,2.6vw,26px);font-weight:900;text-transform:uppercase}
+  .prof-desc{font-size:14.5px;color:#3D4568}
+  .prof-skill{
+    font-family:"Courier New",monospace;font-size:12.5px;font-weight:700;
+    background:var(--blue);color:#fff;padding:6px 14px;white-space:nowrap;
+  }
+  .prof-row:hover .prof-skill{background:var(--navy);color:var(--yellow)}
+
+  /* ============ COUNTRIES: big rows ============ */
+  .countries{background:var(--blue);color:#fff;border-top:3px solid var(--yellow);border-bottom:3px solid var(--yellow)}
+  .countries .sec-title{color:#fff}
+  .countries .sec-title em{color:var(--yellow)}
+  .country-row{
+    display:grid;grid-template-columns:110px 1fr 1.2fr;gap:30px;align-items:center;
+    padding:32px 0;border-bottom:2px solid rgba(255,255,255,.25);
+  }
+  @media(max-width:820px){.country-row{grid-template-columns:70px 1fr}.country-fact{grid-column:1/-1}}
+  .country-flag{font-size:56px;line-height:1;filter:drop-shadow(4px 4px 0 rgba(0,0,0,.25))}
+  .country-name{font-size:clamp(24px,3.4vw,38px);font-weight:900;text-transform:uppercase;line-height:1}
+  .country-name small{display:block;font-size:11px;letter-spacing:.3em;color:var(--yellow);margin-top:8px;font-weight:700}
+  .country-fact{
+    background:rgba(0,15,75,.55);border-left:6px solid var(--yellow);
+    padding:18px 22px;font-size:14.5px;line-height:1.6;color:#E4EAFF;
+  }
+  .country-fact b{color:var(--yellow)}
+  .country-row:hover .country-fact{background:var(--navy)}
+
+  /* ============ SKILLS ============ */
+  .skills-list{border:3px solid var(--navy);background:#fff}
+  .skill-line{
+    display:grid;grid-template-columns:1fr 2fr 70px;gap:20px;align-items:center;
+    padding:20px 26px;border-bottom:3px solid var(--navy);
+  }
+  .skill-line:last-child{border-bottom:none}
+  @media(max-width:640px){.skill-line{grid-template-columns:1fr 60px}.skill-track{grid-column:1/-1;order:3}}
+  .skill-name{font-weight:900;font-size:16px;text-transform:uppercase}
+  .skill-track{height:22px;background:#E7EBFA;position:relative;overflow:hidden}
+  .skill-fill{
+    height:100%;background:var(--blue);width:0;
+    transition:width 1.4s cubic-bezier(.2,.8,.2,1);
+  }
+  .skill-fill.yellow{background:var(--yellow);border-right:3px solid var(--navy)}
+  .skill-pct{font-family:"Courier New",monospace;font-weight:700;font-size:15px;text-align:right;color:var(--blue)}
+  .skills-src{margin-top:18px;font-size:13px;color:#6B7494;font-family:"Courier New",monospace}
+
+  /* ============ FAQ ============ */
+  .faq-list{border-top:3px solid var(--navy)}
+  details{border-bottom:3px solid var(--navy);background:#fff}
+  details[open]{background:var(--yellow-soft)}
+  summary{
+    list-style:none;cursor:pointer;padding:26px 10px;
+    display:flex;justify-content:space-between;align-items:center;gap:20px;
+    font-size:clamp(16px,2.2vw,20px);font-weight:900;text-transform:uppercase;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary .pm{
+    font-family:"Courier New",monospace;font-size:26px;font-weight:700;color:var(--blue);
+    width:40px;height:40px;border:3px solid var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  details[open] summary .pm{background:var(--blue);color:var(--yellow)}
+  details p{padding:0 10px 28px;max-width:720px;color:#3D4568;font-size:15.5px;line-height:1.7}
+  summary:hover{color:var(--blue)}
+
+  /* ============ CTA ============ */
+  .cta{background:var(--yellow);border-top:3px solid var(--navy);padding:110px 0;text-align:center;position:relative;overflow:hidden}
+  .cta::after{
+    content:"FUT";position:absolute;right:-40px;bottom:-70px;
+    font-size:280px;font-weight:900;color:rgba(0,15,75,.07);line-height:1;
+  }
+  .cta h2{font-size:clamp(34px,6vw,74px);font-weight:900;text-transform:uppercase;line-height:.98;letter-spacing:-.02em}
+  .cta h2 span{color:var(--blue)}
+  .cta p{max-width:520px;margin:26px auto 40px;font-size:17px;color:#3d3800}
+  .cta-btn{
+    display:inline-block;background:var(--navy);color:var(--yellow);text-decoration:none;
+    font-weight:900;font-size:17px;text-transform:uppercase;letter-spacing:.06em;
+    padding:22px 52px;box-shadow:10px 10px 0 var(--blue);transition:.15s;position:relative;z-index:2;
+  }
+  .cta-btn:hover{transform:translate(5px,5px);box-shadow:0 0 0 var(--blue);background:var(--blue);color:#fff}
+
+  footer{background:var(--navy);color:#8FA0E8;padding:46px 0;border-top:6px solid var(--yellow);font-size:14px}
+  .foot-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;align-items:center;max-width:1200px;margin:0 auto;padding:0 28px}
+  footer b{color:#fff;letter-spacing:.08em}
+  .foot-mono{font-family:"Courier New",monospace;font-size:12.5px}
+
+  /* reveal on scroll */
+  .rv{opacity:0;transform:translateY(30px);transition:.7s cubic-bezier(.2,.8,.2,1)}
+  .rv.on{opacity:1;transform:none}
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-in">
+    <a class="brand" href="#top">
+      <span class="brand-mark">F</span>
+      <span class="brand-name">FUT SCHOOL<small>NAVIGATOR</small></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#facts">Факты</a></li>
+      <li><a href="#route">Путь</a></li>
+      <li><a href="#quiz">Тест</a></li>
+      <li><a href="#profs">Профессии</a></li>
+      <li><a href="#countries">Страны</a></li>
+      <li><a href="#skills">Навыки</a></li>
+      <li><a class="cta" href="#start">Начать →</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="container hero-inner">
+    <span class="hero-tag">Проект для школьников нового поколения</span>
+    <h1>
+      <span class="row">Твоё</span>
+      <span class="row outline">будущее</span>
+      <span class="row">начинается <span class="fill-yellow">сегодня</span></span>
+    </h1>
+    <div class="hero-sub">
+      <p><b>FUT School</b> — это не просто сайт. Это навигатор: разберись в себе, открой профессии, прокачай навыки и построй свой маршрут к университету и карьере.</p>
+      <a class="hero-cta" href="#route">Построить маршрут ↗</a>
+    </div>
+  </div>
+  <div class="hero-progress">
+    <div class="container hp-in">
+      <span class="hp-label">Твой прогресс</span>
+      <div class="hp-bar"><div class="hp-fill"></div></div>
+      <span class="hp-pct">72%</span>
+      <span class="hp-step">Следующая станция: <b>🎓 Университет</b></span>
+    </div>
+  </div>
+</header>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>Познай себя</span>✦<span>Открой профессии</span>✦<span>Развивай навыки</span>✦<span>Найди университет</span>✦<span>Действуй</span>✦
+    <span>Познай себя</span>✦<span>Открой профессии</span>✦<span>Развивай навыки</span>✦<span>Найди университет</span>✦<span>Действуй</span>✦
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<section class="manifesto">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-num">01</span>
+      <h2 class="sec-title">Почему <em>FUT School</em>?</h2>
+    </div>
+    <p class="sec-desc rv" style="margin:-30px 0 50px">Мы не хотим просто сказать «выбери профессию». Мы даём инструменты, чтобы ты сам принимал решения о своём будущем.</p>
+    <div class="mani-grid rv">
+      <div class="mani-cell"><span class="idx">/01</span><h3>Простота</h3><p>Сложные темы объясняем простым и понятным языком — без занудных терминов.</p></div>
+      <div class="mani-cell"><span class="idx">/02</span><h3>Практичность</h3><p>Не только теория — конкретные шаги, навыки и действия, которые можно начать завтра.</p></div>
+      <div class="mani-cell"><span class="idx">/03</span><h3>Современность</h3><p>IT, AI, новые профессии и возможности, о которых школьная программа молчит.</p></div>
+      <div class="mani-cell"><span class="idx">/04</span><h3>Самостоятельность</h3><p>Мы помогаем думать самостоятельно, а не принимаем решения за тебя.</p></div>
+      <div class="mani-cell"><span class="idx">/05</span><h3>Много вариантов</h3><p>Показываем разные направления и страны, чтобы ты мог сравнивать и выбирать.</p></div>
+      <div class="mani-cell"><span class="idx">/06</span><h3>Начни в любой момент</h3><p>Неважно, на каком ты этапе. Главное — сделать первый шаг, и он уже за тобой.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FACTS -->
+<section class="facts" id="facts">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-num">02</span>
+      <h2 class="sec-title">Факты, которые <em>нельзя игнорировать</em></h2>
+    </div>
+    <div class="fact-rows rv">
+      <div class="fact-row">
+        <div class="fact-big"><b>65%</b><span>школьников</span></div>
+        <div class="fact-text">будут работать в профессиях, которых <b>ещё не существует</b>. Угадать конкретную профессию невозможно — важно научиться быстро учиться.</div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-big"><b>40%</b><span>навыков</span></div>
+        <div class="fact-text">необходимых работникам, <b>изменится уже к 2030 году</b>. Те, кто развивается постоянно, всегда будут впереди.</div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-big"><b>×2</b><span>спрос</span></div>
+        <div class="fact-text">быстрее растёт потребность в специалистах с навыками <b>AI и анализа данных</b> — и это только начало волны.</div>
+      </div>
+      <div class="fact-row">
+        <div class="fact-big"><b>3 года</b><span>после учёбы</span></div>
+        <div class="fact-text">рабочая виза в Канаде для выпускников — <b>образование за рубежом это ещё и билет в мировую карьеру</b>.</div>
+      </div>
+    </div>
+    <p class="facts-src">// источники: WEF Future of Jobs Report, OECD Education Outlook</p>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="route">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-num">03</span>
+      <h2 class="sec-title">Маршрут: <em>5 станций</em></h2>
+    </div>
+    <p class="sec-desc rv" style="margin:-30px 0 40px">Не нужно решать всю жизнь за один день. Просто двигайся от станции к станции.</p>
+    <div class="route rv">
+      <div class="station">
+        <div class="st-num">01</div><div class="st-dot"></div>
+        <div class="st-body"><h3>Познай себя</h3><p>Интересы, способности, сильные стороны. Без этого любой выбор профессии — лотерея.</p><span class="st-meta">~ 2 недели</span></div>
+      </div>
+      <div class="station">
+        <div class="st-num">02</div><div class="st-dot"></div>
+        <div class="st-body"><h3>Исследуй профессии</h3><p>Что люди реально делают в этих профессиях каждый день, а не только красивые названия.</p><span class="st-meta">~ 1 месяц</span></div>
+      </div>
+      <div class="station">
+        <div class="st-num">03</div><div class="st-dot"></div>
+        <div class="st-body"><h3>Развивай навыки</h3><p>Выбери 2–3 навыка из раздела ниже и начни заниматься. Бесплатных ресурсов — море.</p><span class="st-meta">постоянно</span></div>
+      </div>
+      <div class="station">
+        <div class="st-num">04</div><div class="st-dot"></div>
+        <div class="st-body"><h3>Изучи университеты</h3><p>Программы, гранты, требования и стоимость — сравни страны из раздела 05.</p><span class="st-meta">~ 3 месяца</span></div>
+      </div>
+      <div class="station active">
+        <div class="st-num">05</div><div class="st-dot"></div>
+        <div class="st-body"><h3>Создавай будущее</h3><p>Проекты, портфолио, олимпиады, первые реальные шаги. Планы превращаются в результат.</p><span class="st-meta">ты здесь →</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section class="quiz-sec" id="quiz">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-num">04</span>
+      <h2 class="sec-title">Один вопрос — <em>первый ответ</em></h2>
+    </div>
+    <div class="quiz-box rv">
+      <div class="quiz-top"><b>Мини-тест</b><span class="mono">время: 10 секунд</span></div>
+      <div class="quiz-body">
+        <div class="quiz-q">Что тебе было бы интереснее делать?</div>
+        <div class="quiz-opts" id="quizOpts">
+          <button class="quiz-opt" data-res="tech">Создавать программы и приложения</button>
+          <button class="quiz-opt" data-res="design">Придумывать дизайн и визуал</button>
+          <button class="quiz-opt" data-res="data">Разбираться в цифрах и данных</button>
+          <button class="quiz-opt" data-res="people">Общаться и организовывать людей</button>
+        </div>
+      </div>
+      <div class="quiz-res" id="quizRes">
+        <div class="quiz-res-in">
+          <h3 id="resTitle"></h3>
+          <p id="resText"></p>
+          <button class="quiz-retry" onclick="resetQuiz()">← пройти ещё раз</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROFESSIONS -->
+<section id="profs">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-num">05</span>
+      <h2 class="sec-title">Мир <em>профессий</em></h2>
+    </div>
+    <div class="prof-list rv">
+      <a class="prof-row" href="#"><span class="prof-idx">/01</span><span class="prof-name">Software Developer</span><span class="prof-desc">Программы, сайты и приложения, которыми пользуются миллионы</span><span class="prof-skill">Python · JS</span></a>
+      <a class="prof-row" href="#"><span class="prof-idx">/02</span><span class="prof-name">AI Specialist</span><span class="prof-desc">Обучает машины думать — самое быстрорастущее направление</span><span class="prof-skill">Python · математика</span></a>
+      <a class="prof-row" href="#"><span class="prof-idx">/03</span><span class="prof-name">UI/UX Designer</span><span class="prof-desc">Проектирует, как выглядят и работают цифровые продукты</span><span class="prof-skill">Figma · вкус</span></a>
+      <a class="prof-row" href="#"><span class="prof-idx">/04</span><span class="prof-name">Game Developer</span><span class="prof-desc">Создаёт игровые миры, персонажей и механики</span><span class="prof-skill">Unity · C#</span></a>
+      <a class="prof-row" href="#"><span class="prof-idx">/05</span><span class="prof-name">Data Analyst</span><span class="prof-desc">Находит ответы на вопросы бизнеса в цифрах</span><span class="prof-skill">SQL · статистика</span></a>
+      <a class="prof-row" href="#"><span class="prof-idx">/06</span><span class="prof-name">Content Creator</span><span class="prof-desc">Видео, медиа и аудитории — профессия нового десятилетия</span><span class="prof-skill">монтаж · сторителлинг</span></a>
+      <a class="prof-row" href="#"><span class="prof-idx">/07</span><span class="prof-name">Entrepreneur</span><span class="prof-desc">Придумывает и запускает собственные проекты и бизнесы</span><span class="prof-skill">идеи · смелость</span></a>
+      <a class="prof-row" href="#"><span class="prof-idx">/08</span><span class="prof-name">Researcher</span><span class="prof-desc">Двигает науку вперёд и делает открытия</span><span class="prof-skill">английский · терпение</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- COUNTRIES -->
+<section class="countries" id="countries">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-num">06</span>
+      <h2 class="sec-title">Университеты <em>мира</em></h2>
+    </div>
+    <div class="rv">
+      <div class="country-row">
+        <span class="country-flag">🇨🇦</span>
+        <div class="country-name">Канада<small>CANADA</small></div>
+        <div class="country-fact">Выпускники получают <b>рабочую визу до 3 лет</b> после учёбы. IT, инженерия, бизнес.</div>
+      </div>
+      <div class="country-row">
+        <span class="country-flag">🇺🇸</span>
+        <div class="country-name">США<small>USA</small></div>
+        <div class="country-fact">MIT и Stanford дают <b>огромные гранты талантливым</b> — конкурс, но шанс реален.</div>
+      </div>
+      <div class="country-row">
+        <span class="country-flag">🇬🇧</span>
+        <div class="country-name">Великобритания<small>UK</small></div>
+        <div class="country-fact">Бакалавриат длится всего <b>3 года</b>. Технологии, наука, бизнес.</div>
+      </div>
+      <div class="country-row">
+        <span class="country-flag">🇩🇪</span>
+        <div class="country-name">Германия<small>GERMANY</small></div>
+        <div class="country-fact">Обучение в госвузах <b>почти бесплатное — даже для иностранцев</b>. Инженерия и IT.</div>
+      </div>
+      <div class="country-row">
+        <span class="country-flag">🇹🇷</span>
+        <div class="country-name">Турция<small>TURKEY</small></div>
+        <div class="country-fact">Стипендии <b>50–100% за хорошие баллы</b> экзаменов. IT, медицина, бизнес.</div>
+      </div>
+      <div class="country-row" style="border-bottom:none">
+        <span class="country-flag">🇺🇿</span>
+        <div class="country-name">Узбекистан<small>UZBEKISTAN</small></div>
+        <div class="country-fact">Открываются <b>филиалы топовых вузов и IT-академий</b> с грантами.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-num">07</span>
+      <h2 class="sec-title">Навыки, которые <em>пригодятся всем</em></h2>
+    </div>
+    <div class="skills-list rv" id="skillsList">
+      <div class="skill-line"><span class="skill-name">Английский язык</span><div class="skill-track"><div class="skill-fill" data-w="92"></div></div><span class="skill-pct">92%</span></div>
+      <div class="skill-line"><span class="skill-name">Цифровая грамотность</span><div class="skill-track"><div class="skill-fill yellow" data-w="90"></div></div><span class="skill-pct">90%</span></div>
+      <div class="skill-line"><span class="skill-name">Работа с AI</span><div class="skill-track"><div class="skill-fill" data-w="88"></div></div><span class="skill-pct">88%</span></div>
+      <div class="skill-line"><span class="skill-name">Коммуникация</span><div class="skill-track"><div class="skill-fill yellow" data-w="85"></div></div><span class="skill-pct">85%</span></div>
+      <div class="skill-line"><span class="skill-name">Критическое мышление</span><div class="skill-track"><div class="skill-fill" data-w="84"></div></div><span class="skill-pct">84%</span></div>
+      <div class="skill-line"><span class="skill-name">Финансовая грамотность</span><div class="skill-track"><div class="skill-fill yellow" data-w="78"></div></div><span class="skill-pct">78%</span></div>
+    </div>
+    <p class="skills-src">// % работодателей, называющих навык важным — WEF Future of Jobs</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section style="padding-top:20px">
+  <div class="container">
+    <div class="sec-head rv">
+      <span class="sec-num">08</span>
+      <h2 class="sec-title">Вопросы — <em>ответы</em></h2>
+    </div>
+    <div class="faq-list rv">
+      <details open>
+        <summary>Кому подходит FUT School?<span class="pm">+</span></summary>
+        <p>Школьникам, которые хотят понять свои интересы, профессии и варианты дальнейшего обучения — от 12 лет и старше.</p>
+      </details>
+      <details>
+        <summary>А если я не знаю, кем хочу стать?<span class="pm">+</span></summary>
+        <p>Это нормально — и именно с этого можно начать. 65% нынешних школьников будут работать в профессиях, которых ещё нет. Исследуй направления и сравнивай.</p>
+      </details>
+      <details>
+        <summary>Вы выбираете профессию за меня?<span class="pm">+</span></summary>
+        <p>Нет. Мы даём информацию, инструменты и идеи. Решение — только твоё, и это самое ценное, чему мы учим.</p>
+      </details>
+      <details>
+        <summary>Зачем нужен Telegram-бот?<span class="pm">+</span></summary>
+        <p>Бот переносит FUT School в Telegram: напоминания, мини-тесты и шаги маршрута — всегда под рукой в телефоне.</p>
+      </details>
+      <details>
+        <summary>Можно предложить идею для сайта?<span class="pm">+</span></summary>
+        <p>Да! FUT School развивается вместе с учениками. Пиши свои идеи через Telegram — лучшие попадут на сайт.</p>
+      </details>
+      <details>
+        <summary>Когда начинать готовиться к поступлению?<span class="pm">+</span></summary>
+        <p>Чем раньше, тем лучше: с 13–14 лет — изучать направления, с 15–16 — готовиться к экзаменам и грантам вузов мира.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="start">
+  <div class="container">
+    <h2 class="rv">Не жди будущего.<br><span>Создавай его.</span></h2>
+    <p class="rv">Пройди первую станцию, исследуй профессии и начни строить свой собственный маршрут — сегодня.</p>
+    <a class="cta-btn rv" href="#route">Сделать первый шаг ↗</a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-in">
+    <span><b>FUT SCHOOL</b> — навигатор в будущее</span>
+    <span class="foot-mono">© 2026 // made for the next generation</span>
+  </div>
+</footer>
+
+<script>
+  /* quiz */
+  const results = {
+    tech:  {t:"Тебе близок IT", x:"Программирование и технологии — твоё направление. Начни с Python, собери первый маленький проект уже на этой неделе."},
+    design:{t:"У тебя дизайнерский взгляд", x:"UI/UX и визуальные коммуникации ждут тебя. Открой Figma, изучи основы композиции и собери первое портфолио."},
+    data:  {t:"Ты — аналитик", x:"Цифры и закономерности — твоя сила. Data Analyst — отличный выбор. Начни с Excel, SQL и основ статистики."},
+    people:{t:"Ты — лидер", x:"Менеджмент, предпринимательство и медиа — твоё поле. Развивай ораторское мастерство и попробуй вести свой первый проект."}
+  };
+  const opts = document.getElementById("quizOpts");
+  const resBox = document.getElementById("quizRes");
+  opts.addEventListener("click", e=>{
+    const b = e.target.closest(".quiz-opt"); if(!b) return;
+    [...opts.children].forEach(x=>x.classList.remove("picked"));
+    b.classList.add("picked");
+    const r = results[b.dataset.res];
+    document.getElementById("resTitle").textContent = "→ " + r.t;
+    document.getElementById("resText").textContent = r.x;
+    setTimeout(()=>{ resBox.style.display="block"; }, 200);
+  });
+  function resetQuiz(){
+    resBox.style.display="none";
+    [...opts.children].forEach(x=>x.classList.remove("picked"));
+  }
+
+  /* reveal on scroll */
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("on"); io.unobserve(e.target); } });
+  },{threshold:.12});
+  document.querySelectorAll(".rv").forEach(el=>io.observe(el));
+
+  /* skill bars animate */
+  const sk = document.getElementById("skillsList");
+  const io2 = new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        sk.querySelectorAll(".skill-fill").forEach(f=>{ f.style.width = f.dataset.w + "%"; });
+        io2.disconnect();
+      }
+    });
+  },{threshold:.3});
+  io2.observe(sk);
+</script>
+
+</body>
+</html>
